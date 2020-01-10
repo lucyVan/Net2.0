@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- mybatis-3-config.dtd 是mybatis-config配置文件用的文档类型定义的文件名称 -->
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- mybatis-config配置文件元素的具体设置（应用和数据库之间的配置信息） -->
+<configuration>
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url"
+                          value="jdbc:mysql://localhost/net?allowPublicKeyRetrieval=true&amp;useSSL=false"/>
+                <property name="username" value="test"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <!-- UsersMapper.xml应用中的Java对象和数据库中表数据实现对应映射用的配置文件 -->
+    <mappers>
+        <mapper resource="mappers/mapperAdmins.xml"/>
+        <mapper resource="mappers/mapperFlows.xml"/>
+        <mapper resource="mappers/mapperTeachers.xml"/>
+        <mapper resource="mappers/mapperNotices.xml"/>
+        <mapper resource="mappers/mapperLearns.xml"/>
+        <mapper resource="mappers/mapperUsers.xml"/>
+        <mapper resource="mappers/mapperReceivers.xml"/>
+        <mapper resource="mappers/mapperOrders.xml"/>
+        <mapper resource="mappers/mapperSpecies.xml"/>
+        <mapper resource="mappers/mapperCourses.xml"/>
+    </mappers>
+
+</configuration>

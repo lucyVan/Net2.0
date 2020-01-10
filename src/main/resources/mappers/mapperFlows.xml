@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.mapperFlows">
+	
+	<!-- 动态sql的增删改查，以下依次。 -->
+	
+	<!-- 动态插入 Flows  中对应的属性与值 -->
+	<sql id="FlowsKey">
+		<trim suffixOverrides=",">
+			<if test="Fid !=null and Fid !=''">
+				Fid,
+			</if>
+			<if test="Oid !=null and Oid !=''">
+				Oid,
+			</if>
+			<if test="Fprovince !=null and Fprovince !=''">
+				Fprovince,
+			</if>
+			<if test="Fcity !=null and Fcity !=''">
+				Fcity,
+			</if>
+			<if test="Fdistrict !=null and Fdistrict !=''">
+				Fdistrict,
+			</if>
+			<if test="Fadress !=null and Fadress !=''">
+				Fadress,
+			</if>
+		</trim>
+	</sql>
+	<sql id="FlowsValues">
+		<trim suffixOverrides=",">
+			<if test="Fid !=null and Fid !=''">
+				#{Fid},
+			</if>
+			<if test="Oid !=null and Oid !=''">
+				#{Oid},
+			</if>
+			<if test="Fprovince !=null and Fprovince !=''">
+				#{Fprovince},
+			</if>
+			<if test="Fcity !=null and Fcity !=''">
+				#{Fcity},
+			</if>
+			<if test="Fdistrict !=null and Fdistrict !=''">
+				#{Fdistrict},
+			</if>
+			<if test="Fadress !=null and Fadress !=''">
+				#{Fadress},
+			</if>
+		</trim>
+	</sql>
+	<insert id="insertFlows" parameterType="com.demo.pojo.Flows">
+		insert into Flows(
+		<include refid="FlowsKey" />
+		)
+		values(
+		<include refid="FlowsValues" />
+		)
+	</insert>
+
+	<!-- 动态删除Flows中的属性值 -->
+	<delete id="deleteFlows">
+		delete from Flows where Fid in
+		<foreach collection="list" open="(" close=")" separator=","
+			item="Fid">
+			#{Fid}
+		</foreach>
+	</delete>
+
+	<!-- 通过Fid 动态更新其他属性值 -->
+	<update id="updateFlows" parameterType="com.demo.pojo.Flows">
+		update Flows
+		<set>
+			<if test="Fid != null and Fid !=''">
+				Fid=#{Fid},
+			</if>
+			<if test="Oid != null and Oid !=''">
+				Oid=#{Oid},
+			</if>
+			<if test="Fprovince != null and Fprovince !=''">
+				Fprovince=#{Fprovince},
+			</if>
+			<if test="Fcity != null and Fcity !=''">
+				Fcity=#{Fcity},
+			</if>
+			<if test="Fdistrict != null and Fdistrict !=''">
+				Fdistrict=#{Fdistrict},
+			</if>
+			<if test="Fadress != null and Fadress !=''">
+				Fadress=#{Fadress},
+			</if>
+		</set>
+		where Fid=#{Fid}
+	</update>
+	
+	<!-- 动态查询其他属性值 -->
+	<select id="selectFlows" resultType="com.demo.pojo.Flows">
+        select * from Flows
+        <where>
+            <if test="Fid !=null and Fid !=''">
+                and Fid=#{Fid}
+            </if>
+            <if test="Oid !=null and Oid !=''">
+                and Oid=#{Oid}
+            </if>
+        </where>
+    </select>
+	
+	<resultMap type="com.demo.pojo.Flows" id="BaseMap">
+		<result property="Fid" column="Fid" />
+		<result property="Oid" column="Oid" />
+		<result property="Fprovince" column="Fprovince" />
+		<result property="Fcity" column="Fcity" />
+		<result property="Fdistrict" column="Fdistrict" />
+		<result property="Fadress" column="Fadress" />
+	</resultMap>
+	<resultMap type="com.demo.pojo.Flows" id="OrdersMap" extends="BaseMap">
+		<association property="Orders" javaType="com.demo.pojo.Orders"
+			foreignColumn="Oid">
+			<id property="Oid" column="Oid" />
+			<result property="Cid" column="Cid" />
+			<result property="Uid" column="Uid" />
+			<result property="Oevaul" column="Oevaul" />
+			<result property="Cprice" column="Cprice" />
+			<result property="Ocreatetime" column="Ocreatetime" />
+			<result property="Ostate" column="Ostate" />
+		</association>
+	</resultMap>
+	<select id="selectOrders" resultMap="OrdersMap">
+		SELECT * FROM flows f left
+		JOIN orders o ON f.Oid = o.Oid
+	</select>
+	
+	
+	
+</mapper>

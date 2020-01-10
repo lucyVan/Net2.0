@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.mapperTeachers">
+	<resultMap type="com.demo.pojo.Teachers" id="BaseMap">
+		<id property="Tid" column="Tid" />
+		<result property="Tname" column="Tname" />
+		<result property="Tsex" column="Tsex" />
+		<result property="Ttel" column="Ttel" />
+		<result property="Taddr" column="Taddr" />
+		<result property="Tinfo" column="Tinfo" />
+	</resultMap>
+	<resultMap type="com.demo.pojo.Teachers" id="CoursesMap" extends="BaseMap">
+		<collection property="CoursesList" javaType="List" ofType="com.demo.pojo.Courses"
+			foreignColumn="Tid">
+			<id property="Cid" column="Cid" />
+			<result property="Sid" column="Sid" />
+			<result property="Cname" column="Cname" />
+			<result property="Ctime" column="Ctime" />
+			<result property="Cimage" column="Cimage" />
+			<result property="Cinfo" column="Cinfo" />
+		</collection>
+	</resultMap>
+
+	<!-- 通过Tid/Tname/Tsex查询所有属性值 -->
+	<select id="selectTeachers" resultType="com.demo.pojo.Teachers">
+		select * from Teachers
+		<where>
+		    <if test="Tid!=null and Tid!=''">
+		        and Tid=#{Tid}
+		    </if>
+		    <if test="Tname!=null and Tname!=''">
+		        and Tname=#{Tname}
+		    </if>
+		    <if test="Tsex!=null and Tsex!=''">
+		        and Tsex=#{Tsex}
+		    </if>
+		</where>
+	</select>
+	
+	
+	<!-- 通过Tid动态更新其他属性值 -->
+	<update id="updateTeachers" >
+	    update Teachers
+	    <set>
+	        <if test="Tname!=null and Tname!=''">
+	            Tname=#{Tname},
+	        </if>
+	        <if test="Tsex!=null and Tsex!=''">
+	            Tsex=#{Tsex},
+	        </if>
+	        <if test="Ttel!=null and Ttel!=''">
+	            Ttel=#{Ttel},
+	        </if>
+	        <if test="Taddr!=null and Taddr!=''">
+	            Taddr=#{Taddr},
+	        </if>
+	        <if test="Tinfo!=null and Tinfo!=''">
+	            Tinfo=#{Tinfo},
+	        </if>
+	    </set>
+	    <where>
+	        Tid=#{Tid}
+	    </where>
+	</update>
+	
+	
+	<!-- 通过Tid动态删除其他属性值 -->
+	<delete id="deleteTeachers" parameterType="java.util.List">
+	    delete from Teachers where Tid in
+	        <foreach collection="list" item="Tid" open="(" close=")" separator=",">
+	            #{Tid}
+	        </foreach>
+	</delete>
+	
+
+	<!-- 动态插入Teachers中对应的属性值 -->
+	<sql id="TeachersKey">
+        <trim suffixOverrides=",">
+            <if test="Tid!=null and Tid!=''">
+                Tid,
+            </if>
+            <if test="Tname!=null and Tname!=''">
+                Tname,
+            </if>
+            <if test="Tsex!=null and Tsex!=''">
+                Tsex,
+            </if>
+            <if test="Ttel!=null and Ttel!=''">
+                Ttel,
+            </if>
+            <if test="Taddr!=null and Taddr!=''">
+                Taddr,
+            </if>
+            <if test="Tinfo!=null and Tinfo!=''">
+                Tinfo,
+            </if>
+        </trim>
+    </sql>
+    <sql id="TeachersValues">
+        <trim suffixOverrides=",">
+            <if test="Tid!=null and Tid!=''">
+                #{Tid},
+            </if>
+            <if test="Tname!=null and Tname!=''">
+                #{Tname},
+            </if>
+            <if test="Tsex!=null and Tsex!=''">
+                #{Tsex},
+            </if>
+            <if test="Ttel!=null and Ttel!=''">
+                #{Ttel},
+            </if>
+            <if test="Taddr!=null and Taddr!=''">
+                #{Taddr},
+            </if>
+            <if test="Tinfo!=null and Tinfo!=''">
+                #{Tinfo},
+            </if>
+        </trim>
+    </sql>
+	<insert id="insertTeachers" >
+       insert into Teachers(<include refid="TeachersKey"/>) 
+       values(<include refid="TeachersValues"/>)
+    </insert>
+
+
+
+	<select id="selectCourses" resultMap="CoursesMap">
+		select * from 
+		Teachers t left join Courses c 
+		on t.Tid=c.Tid where t.Tid=#{Tid}
+	</select>
+	
+
+</mapper>

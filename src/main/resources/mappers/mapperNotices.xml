@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.dao.mapperNotices">
+	<!-- notices表与order表配置的一对一属性 -->
+	<resultMap type="com.demo.pojo.Notices" id="OrdersMap">
+		<id property="Nid" column="Nid"/>
+		<result property="Oid" column="Oid"/>
+		<result property="Uid" column="Uid"/>
+		<result property="Nstate" column="Nstate"/>
+		<result property="Nmsg" column="Nmsg"/>
+		<association property="Orders" javaType="com.demo.pojo.Orders">
+			<id property="Oid" column="Oid"/>
+			<result property="Cid" column="Cid"/>
+			<result property="Uid" column="Uid"/>
+			<result property="Oevaul" column="Oevaul"/>
+			<result property="Cprice" column="Cprice"/>
+			<result property="Ocreattime" column="Ocreattime"/>
+			<result property="Ostate" column="Ostate"/>		
+		</association>
+	</resultMap>
+	<!-- notices表与users表配置的多对一属性 -->
+	<resultMap type="com.demo.pojo.Notices" id="UsersMap" extends="OrdersMap">
+		<association property="Users" javaType="com.demo.pojo.Users">
+			<id property="Uid" column="Uid"/>
+			<result property="Uname" column="Uname"/>
+			<result property="Usex" column="Usex"/>
+			<result property="Utel" column="Utel"/>
+			<result property="Uemail" column="Uemail"/>
+			<result property="Upassword" column="Upassword"/>
+			<result property="Sid" column="Sid"/>		
+		</association>
+	</resultMap>
+	
+	
+	<!-- 通过Nid/Oid查询所有属性值 -->
+	<select id="selectNotices" resultType="com.demo.pojo.Notices">
+		select * from Notices
+		<where>
+		    <if test="Nid!=null and Nid!=''">
+		        and Nid=#{Nid}
+		    </if>
+		    <if test="Oid!=null and Oid!=''">
+		        and Oid=#{Oid}
+		    </if>
+		    <if test="Uid!=null and Uid!=''">
+	            Uid=#{Uid}
+	        </if>
+		</where>
+	</select>
+	
+	<!-- 通过Nid动态更新其他属性值  -->
+	<update id="updateNotices" >
+	    update Notices
+	    <set>
+	        <if test="Oid!=null and Oid!=''">
+	            Oid=#{Oid},
+	        </if>
+	        <if test="Uid!=null and Uid!=''">
+	            Uid=#{Uid},
+	        </if>
+	        <if test="Nstate!=null and Nstate!=''">
+	            Nstate=#{Nstate},
+	        </if>
+	        <if test="Nmsg!=null and Nmsg!=''">
+	            Nmsg=#{Nmsg},
+	        </if>
+	    </set>
+	    <where>
+	        Nid=#{Nid}
+	    </where>
+	</update>
+	
+	<!-- 通过Nid动态删除其他属性值 -->
+	<delete id="deleteNotices" parameterType="java.util.List">
+	    delete from Notices where Nid in
+	        <foreach collection="list" item="Nid" open="(" close=")" separator=",">
+	            #{Nid}
+	        </foreach>
+	</delete>
+	
+	<!-- 动态插入Notices中对应的属性值  -->
+	<sql id="NoticesKey">
+        <trim suffixOverrides=",">
+            <if test="Nid!=null and Nid!=''">
+                Nid,
+            </if>
+            <if test="Oid!=null and Oid!=''">
+                Oid,
+            </if>
+            <if test="Uid!=null and Uid!=''">
+                Uid,
+            </if>
+            <if test="Nstate!=null and Nstate!=''">
+                Nstate,
+            </if>
+             <if test="Nmsg!=null and Nmsg!=''">
+	            Nmsg,
+	        </if>
+        </trim>
+    </sql>
+    <sql id="NoticesValues">
+        <trim suffixOverrides=",">
+            <if test="Nid!=null and Nid!=''">
+                #{Nid},
+            </if>
+            <if test="Oid!=null and Oid!=''">
+                #{Oid},
+            </if>
+            <if test="Uid!=null and Uid!=''">
+                #{Uid},
+            </if>
+            <if test="Nstate!=null and Nstate!=''">
+                #{Nstate},
+            </if>
+             <if test="Nmsg!=null and Nmsg!=''">
+	            #{Nmsg},
+	        </if>
+        </trim>
+    </sql>
+	<insert id="insertNotices" >
+       insert into Notices(<include refid="NoticesKey"/>) 
+       values(<include refid="NoticesValues"/>)
+    </insert>
+	
+	
+	
+	
+	
+	<select id="selectOrders" resultMap="OrdersMap">
+		SELECT * FROM 
+		Notices n LEFT JOIN Orders o 
+		ON n.Oid=o.Oid where n.Oid=#{Oid}
+	</select>
+	
+	<select id="selectUsers" resultMap="UsersMap">
+		SELECT * FROM 
+		Notices n LEFT JOIN Users u 
+		ON n.Uid=u.Uid where u.Uid=#{Uid}
+	</select>
+	
+	
+</mapper>

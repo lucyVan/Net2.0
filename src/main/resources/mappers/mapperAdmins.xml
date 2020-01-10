@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.mapperAdmins">
+	<!-- 动态sql的增删改查  -->
+
+
+	<!-- 动态查询Admins其他属性值 -->
+	<select id="selectAdmins" resultType="com.demo.pojo.Admins">
+        select * from Admins
+        <where>
+            <if test="Aid !=null and Aid !=''">
+                and Aid=#{Aid}
+            </if>
+            <if test="Aname !=null and Aname !=''">
+                and Aname=#{Aname}
+            </if>
+            <if test="Apassword !=null and Apassword !=''">
+                and Apassword=#{Apassword}
+            </if>
+        </where>
+    </select>
+</mapper>

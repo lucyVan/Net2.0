@@ -1,0 +1,23 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSP Demo</title>
+</head>
+<body>
+	<h1>修改订单界面</h1>
+	<form action="/Net/jsp/Users/${messages}" method="post">
+		订单编号<input type="text" id="Oid" name="Oid" readOnly="readOnly"
+			value="${msg.oid}" /> 课程编号<input type="text" id="Cid" name="Cid"
+			value="${msg.cid}" /> 用户编号<input type="text" id="Uid" name="Uid"
+			value="${msg.uid}" /> 评价<input type="text" id="Oevaul" name="Oevaul"
+			value="${msg.oevaul}" /> 价格<input type="text" id="Cprice"
+			name="Cprice" readOnly="readOnly" value="${msg.cprice}" /> 状态<input
+			type="text" id="Ostate" name="Ostate" value="${msg.ostate}" /> <input
+			type="submit" value="${message}">
+	</form>
+</body>
+</html>

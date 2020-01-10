@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.mapperLearns">
+	<!-- 动态sql的增删改查，以下依次。 -->
+	
+	<!-- 动态插入Learns中对应的属性与值 -->
+	<sql id="LearnsKey">
+		<trim suffixOverrides=",">
+			<if test="Lid !=null and Lid !=''">
+				Lid,
+			</if>
+			<if test="Cid !=null and Cid !=''">
+				Cid,
+			</if>
+			<if test="Uid !=null and Uid !=''">
+				Uid,
+			</if>
+		</trim>
+	</sql>
+	<sql id="LearnsValues">
+		<trim suffixOverrides=",">
+			<if test="Lid !=null and Lid !=''">
+				#{Lid},
+			</if>
+			<if test="Cid !=null and Cid !=''">
+				#{Cid},
+			</if>
+			<if test="Uid !=null and Uid !=''">
+				#{Uid},
+			</if>
+		</trim>
+	</sql>
+	<insert id="insertLearns" parameterType="com.demo.pojo.Learns">
+		insert into Learns(
+		<include refid="LearnsKey" />
+		)
+		values(
+		<include refid="LearnsValues" />
+		)
+	</insert>
+	
+
+	<!-- 动态删除Learns中的属性值 -->
+	<delete id="deleteLearns">
+		delete from Learns where Lid in
+		<foreach collection="list" open="(" close=")" separator=","
+			item="Lid">
+			#{Lid}
+		</foreach>
+	</delete>
+
+	<!-- 通过 Lid 动态更新其他属性值 -->
+	<update id="updateLearns" parameterType="com.demo.pojo.Learns">
+		update Learns
+		<set>
+			<if test="Lid != null and Lid !=''">
+				Lid=#{Lid},
+			</if>
+			<if test="Cid != null and Cid !=''">
+				Cid=#{Cid},
+			</if>
+			<if test="Uid != null and Uid !=''">
+				Uid=#{Uid},
+			</if>
+		</set>
+		where Lid=#{Lid}
+	</update>
+	
+	<!-- 通过Uid，Uname动态查询其他属性值 -->
+	<select id="selectLearns" resultType="com.demo.pojo.Learns">
+        select * from Learns
+        <where>
+            <if test="Lid !=null and Lid !=''">
+                and Lid=#{Lid}
+            </if>
+            <if test="Cid !=null and Cid !=''">
+                and Cid=#{Cid}
+            </if>
+            <if test="Uid !=null and Uid !=''">
+                and Uid=#{Uid}
+            </if>
+        </where>
+    </select>
+	
+	
+	
+	
+	
+	
+	<resultMap type="com.demo.pojo.Learns" id="BaseMap">
+		<result property="Lid" column="Lid" />
+		<result property="Cid" column="Cid" />
+		<result property="Uid" column="Uid" />
+	</resultMap>
+	<resultMap type="com.demo.pojo.Learns" id="CoursesMap" extends="BaseMap">
+		<association property="Courses" javaType="com.demo.pojo.Courses"
+			foreignColumn="Cid">
+			<id property="Cid" column="Cid" />
+			<result property="Tid" column="Tid" />
+			<result property="Sid" column="Sid" />
+			<result property="Cname" column="Cname" />
+			<result property="Ctime" column="Ctime" />
+			<result property="Cimage" column="Cimage" />
+			<result property="Cinfo" column="Cinfo" />
+		</association>
+	</resultMap>
+	<resultMap type="com.demo.pojo.Learns" id="UsersMap" extends="BaseMap">
+		<association property="Users" javaType="com.demo.pojo.Users"
+			foreignColumn="Uid">
+			<id property="Uid" column="Uid" />
+			<result property="Uname" column="Uname" />
+			<result property="Usex" column="Usex" />
+			<result property="Utel" column="Utel" />
+			<result property="Uemail" column="Uemail" />
+			<result property="Upassword" column="Upassword" />
+			<result property="Sid" column="Sid" />
+		</association>
+	</resultMap>
+
+	<select id="selectCourses" resultMap="CoursesMap">
+		SELECT * FROM
+		learns l left JOIN courses c ON C.Cid = L.Cid
+	</select>
+	<select id="selectUsers" resultMap="UsersMap">
+		SELECT * FROM
+		learns l left JOIN users u ON l.Uid = u.Uid
+	</select>
+
+</mapper>

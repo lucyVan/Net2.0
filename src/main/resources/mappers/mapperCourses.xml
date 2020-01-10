@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.demo.dao.mapperCourses">
+
+    <!-- 动态sql的增删改查，以下依次。 -->
+
+    <!-- 动态插入Courses中对应的属性与值 -->
+    <sql id="CoursesKey">
+        <trim suffixOverrides=",">
+            <if test="Cid !=null and Cid !=''">
+                Cid,
+            </if>
+            <if test="Tid !=null and Tid !=''">
+                Tid,
+            </if>
+            <if test="Sid !=null and Sid !=''">
+                Sid,
+            </if>
+            <if test="Cname !=null and Cname !=''">
+                Cname,
+            </if>
+            <if test="Ctime !=null and Ctime !=''">
+                Ctime,
+            </if>
+            <if test="Cimage !=null and Cimage !=''">
+                Cimage,
+            </if>
+            <if test="Cinfo !=null and Cinfo !=''">
+                Cinfo,
+            </if>
+            <if test="Curl !=null and Curl !=''">
+                Curl,
+            </if>
+        </trim>
+    </sql>
+    <sql id="CoursesValues">
+        <trim suffixOverrides=",">
+            <if test="Cid !=null and Cid !=''">
+                #{Cid},
+            </if>
+            <if test="Tid !=null and Tid !=''">
+                #{Tid},
+            </if>
+            <if test="Sid !=null and Sid !=''">
+                #{Sid},
+            </if>
+            <if test="Cname !=null and Cname !=''">
+                #{Cname},
+            </if>
+            <if test="Ctime !=null and Ctime !=''">
+                #{Ctime},
+            </if>
+            <if test="Cimage !=null and Cimage !=''">
+                #{Cimage},
+            </if>
+            <if test="Cinfo !=null and Cinfo !=''">
+                #{Cinfo},
+            </if>
+            <if test="Curl !=null and Curl !=''">
+                #{Curl},
+            </if>
+        </trim>
+    </sql>
+    <insert id="insertCourses" parameterType="com.demo.pojo.Courses">
+        insert into Courses(
+        <include refid="CoursesKey"/>
+        )
+        values(
+        <include refid="CoursesValues"/>
+        )
+    </insert>
+
+    <!-- 动态删除Courses中的属性值 -->
+    <delete id="deleteCourses">
+        delete from Courses where Cid in
+        <foreach collection="list" open="(" close=")" separator=","
+                 item="Cid">
+            #{Cid}
+        </foreach>
+    </delete>
+
+    <!-- 通过 Cid 动态更新其他属性值 -->
+    <update id="updateCourses" parameterType="com.demo.pojo.Courses">
+        update Courses
+        <set>
+            <if test="Cid != null and Cid !=''">
+                Cid=#{Cid},
+            </if>
+            <if test="Tid != null and Tid !=''">
+                Tid=#{Tid},
+            </if>
+            <if test="Sid != null and Sid !=''">
+                Sid=#{Sid},
+            </if>
+            <if test="Cname != null and Cname !=''">
+                Cname=#{Cname},
+            </if>
+            <if test="Cimage != null and Cimage !=''">
+                Cimage=#{Cimage},
+            </if>
+            <if test="Cinfo != null and Cinfo != ''">
+                Cinfo=#{Cinfo},
+            </if>
+        </set>
+        where Cid=#{Cid}
+    </update>
+
+    <!-- 通过动态查询其他属性值 -->
+    <select id="selectCourses" resultType="com.demo.pojo.Courses">
+        select * from Courses
+        <where>
+            <if test="Cid !=null and Cid !=''">
+                and Cid=#{Cid}
+            </if>
+            <if test="Tid !=null and Tid !=''">
+                and Tid=#{Tid}
+            </if>
+            <if test="Sid !=null and Sid !=''">
+                and Sid=#{Sid}
+            </if>
+            <if test="Cname !=null and Cname !=''">
+                and Cname=#{Cname}
+            </if>
+            <if test="Curl !=null and Curl !=''">
+                and Curl=#{Curl}
+            </if>
+        </where>
+    </select>
+
+
+    <resultMap type="com.demo.pojo.Courses" id="BaseMap">
+        <result property="Cid" column="Cid"/>
+        <result property="Tid" column="Tid"/>
+        <result property="Sid" column="Sid"/>
+        <result property="Cname" column="Cname"/>
+        <result property="Ctime" column="Ctime"/>
+        <result property="Cimage" column="Cimage"/>
+        <result property="Cinfo" column="Cinfo"/>
+    </resultMap>
+    <resultMap type="com.demo.pojo.Courses" id="SpeciesMap" extends="BaseMap">
+        <association property="Species" javaType="com.demo.pojo.Species"
+                     foreignColumn="Sid">
+            <result property="Sid" column="Sid"/>
+            <result property="Sname" column="Sname"/>
+            <result property="Sinfo" column="Sinfo"/>
+        </association>
+    </resultMap>
+    <select id="selectSpecies" resultMap="SpeciesMap">
+		SELECT * FROM
+		Courses c left
+		JOIN species s ON c.Sid=s.Sid
+	</select>
+    <resultMap type="com.demo.pojo.Courses" id="OrdersMap" extends="BaseMap">
+        <collection property="OrdersList" javaType="java.util.List"
+                    ofType="com.demo.pojo.Orders" foreignColumn="Cid">
+            <id property="Oid" column="Oid"/>
+            <result property="Cid" column="Cid"/>
+            <result property="Uid" column="Uid"/>
+            <result property="Oevaul" column="Oevaul"/>
+            <result property="Cprice" column="Cprice"/>
+            <result property="Ocreatetime" column="Ocreatetime"/>
+            <result property="Ostate" column="Ostate"/>
+        </collection>
+    </resultMap>
+    <select id="selectOrders" resultMap="OrdersMap">
+		SELECT * FROM Courses c
+		right JOIN orders o ON c.cid = o.cid
+	</select>
+    <resultMap type="com.demo.pojo.Courses" id="TeachersMap" extends="BaseMap">
+        <association property="Teachers" javaType="com.demo.pojo.Teachers"
+                     foreignColumn="Tid">
+            <id property="Tid" column="Tid"/>
+            <result property="Tname" column="Tname"/>
+            <result property="Tsex" column="Tsex"/>
+            <result property="Ttel" column="Ttel"/>
+            <result property="Taddr" column="Taddr"/>
+            <result property="Tinfo" column="Tinfo"/>
+        </association>
+    </resultMap>
+    <select id="selectTeachers" resultMap="TeachersMap">
+		select * from courses c
+		RIGHT join teachers t on t.Tid=c.Tid
+	</select>
+    <resultMap type="com.demo.pojo.Courses" id="UsersMap" extends="BaseMap">
+        <collection property="UsersList" javaType="java.util.List"
+                    ofType="com.demo.pojo.Users">
+            <id property="Uid" column="Uid"></id>
+            <result property="Uname" column="Uname"></result>
+            <result property="Usex" column="Usex"></result>
+            <result property="Utel" column="Utel"></result>
+            <result property="Uemail" column="Uemail"></result>
+            <result property="Upassword" column="Upassword"></result>
+            <result property="Ucreatetime" column="Ucreatetime"></result>
+            <result property="Sid" column="Sid"></result>
+            <result property="Uimage" column="Uimage"></result>
+        </collection>
+    </resultMap>
+    <select id="selectUsers" resultMap="UsersMap">
+		select
+		u.Uname,c.Cname from
+		learns l ,courses c,users u WHERE l.Cid = c.cid
+		and l.uid = u.uid
+	</select>
+    <select id="selectCoursesByAnything" resultType="com.demo.pojo.Courses">
+        select * from Courses where 1=1
+        <if test="Cname !=null and Cname !=''">
+            and Cname like '%${Cname}%'
+        </if>
+    </select>
+
+</mapper>

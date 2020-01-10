@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Net:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>Net</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="Net.war">
+      <element id="artifact" artifact-name="Net:war exploded" />
+    </root>
+  </artifact>
+</component>

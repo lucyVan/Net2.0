@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.mapperUsers">
+	<!-- 动态sql的增删改查，以下依次。 -->
+	
+	<!-- 动态插入Users中对应的属性与值 -->
+	<sql id="UsersKey">
+		<trim suffixOverrides=",">
+			<if test="Uid !=null and Uid !=''">
+				Uid,
+			</if>
+			<if test="Uname !=null and Uname !=''">
+				Uname,
+			</if>
+			<if test="Usex !=null and Usex !=''">
+				Usex,
+			</if>
+			<if test="Utel !=null and Utel !=''">
+				Utel,
+			</if>
+			<if test="Uemail !=null and Uemail !=''">
+				Uemail,
+			</if>
+			<if test="Upassword !=null and Upassword !=''">
+				Upassword,
+			</if>
+			<if test="Sid !=null and Sid !=''">
+				Sid,
+			</if>
+			<if test="Uimage !=null and Uimage !=''">
+				Uimage,
+			</if>
+		</trim>
+	</sql>
+	<sql id="UsersValues">
+		<trim suffixOverrides=",">
+			<if test="Uid !=null and Uid !=''">
+				#{Uid},
+			</if>
+			<if test="Uname !=null and Uname !=''">
+				#{Uname},
+			</if>
+			<if test="Usex !=null and Usex !=''">
+				#{Usex},
+			</if>
+			<if test="Utel !=null and Utel !=''">
+				#{Utel},
+			</if>
+			<if test="Uemail !=null and Uemail !=''">
+				#{Uemail},
+			</if>
+			<if test="Upassword !=null and Upassword !=''">
+				#{Upassword},
+			</if>
+			<if test="Sid !=null and Sid !=''">
+				#{Sid},
+			</if>
+			<if test="Uimage !=null and Uimage !=''">
+				#{Uimage},
+			</if>
+		</trim>
+	</sql>
+	<insert id="insertUsers" parameterType="com.demo.pojo.Users">
+		insert into Users(
+		<include refid="UsersKey" />
+		,Ucreatetime
+		)
+		values(
+		<include refid="UsersValues" />
+		,now()
+		)
+	</insert>
+
+	<!-- 动态删除Users中的属性值 -->
+	<delete id="deleteUsers" parameterType="java.util.List">
+		delete from Users where Uid in
+		<foreach collection="list" open="(" close=")" separator=","
+			item="Uid">
+			#{Uid}
+		</foreach>
+	</delete>
+
+	<!-- 通过 Uid 动态更新其他属性值 -->
+	<update id="updateUsers" parameterType="com.demo.pojo.Users">
+		update Users
+		<set>
+			<if test="Uname != null and Uname !=''">
+				Uname=#{Uname},
+			</if>
+			<if test="Usex != null and Usex !=''">
+				Usex=#{Usex},
+			</if>
+			<if test="Utel != null and Utel !=''">
+				Utel=#{Utel},
+			</if>
+			<if test="Uemail != null and Uemail !=''">
+				Uemail=#{Uemail},
+			</if>
+			<if test="Upassword != null and Upassword !=''">
+				Upassword=#{Upassword},
+			</if>
+			<if test="Sid != null and Sid!=''">
+				Sid=#{Sid},
+			</if>
+		</set>
+		where Uid=#{Uid}
+	</update>
+	
+	<!-- 通过Uid，Uname动态查询其他属性值 -->
+	<select id="selectUsers" resultType="com.demo.pojo.Users">
+        select * from Users
+        <where>
+            <if test="Uid !=null and Uid !=''">
+                and Uid=#{Uid}
+            </if>
+            <if test="Uname !=null and Uname !=''">
+                and Uname=#{Uname}
+            </if>
+            <if test="Utel !=null and Utel !=''">
+                and Utel=#{Utel}
+            </if>
+        </where>
+    </select>
+
+
+
+	<!-- 联合查询中Base的resultMap -->
+	<resultMap type="com.demo.pojo.Users" id="BaseMap">
+		<id property="Uid" column="Uid" />
+		<result property="Uname" column="Uname" />
+		<result property="Usex" column="Usex" />
+		<result property="Utel" column="Utel" />
+		<result property="Uemail" column="Uemail" />
+		<result property="Upassword" column="Upassword" />
+		<result property="Uimage" column="Uimage" />
+		<result property="Ucreatetime" column="Ucreatetime" />
+	</resultMap>
+	<!-- 联合查询Users对Species（一对一） -->
+	<resultMap type="com.demo.pojo.Users" id="SpeciesMap" extends="BaseMap" >	
+		<association property="Species" javaType="com.demo.pojo.Species" foreignColumn="Sid">
+			<id property="Sid" column="Sid" />
+			<result property="Sname" column="Sname" />
+			<result property="Sinfo" column="Sinfo" />
+		</association>
+	</resultMap>
+	<select id="selectSpecies" resultMap="SpeciesMap">
+		select * from Species se
+		left join Users s on se.Sid=s.Uid
+	</select>
+	<!-- 联合查询Users对Learns（一对多） -->
+	<resultMap type="com.demo.pojo.Users" id="LearnsMap" extends="BaseMap">
+		<collection property="LearnsList" ofType="com.demo.pojo.Learns">
+			<id property="Lid" column="Lid" />
+			<result property="Cid" column="Cid" />
+			<result property="Uid" column="Uid" />
+		</collection>	
+	</resultMap>
+	<select id="selectLearns" resultMap="LearnsMap">
+		select * from Learns l right
+		join Users u on l.Lid=u.Uid
+	</select>	
+	<!-- 联合查询Users对Notices（一对多） -->
+	<resultMap type="com.demo.pojo.Users" id="NoticesMap" extends="BaseMap">
+		<collection property="NoticesList" ofType="com.demo.pojo.Notices">
+			<id property="Nid" column="Nid" />
+			<result property="Oid" column="Oid" />
+			<result property="Uid" column="Uid" />
+			<result property="Nstate" column="Nstate" />
+		</collection>	
+	</resultMap>
+	<select id="selectNotices" resultMap="NoticesMap">
+		select * from Notices n right join Users u on n.Nid=u.Uid
+	</select>
+	<!-- 联合查询Users对Orders（一对多） -->
+	<resultMap type="com.demo.pojo.Users" id="OrdersMap" extends="BaseMap">
+		<collection property="OrdersList" ofType="com.demo.pojo.Orders">
+			<id property="Oid" column="Oid" />
+			<result property="Cid" column="Cid" />
+			<result property="Uid" column="Uid" />
+			<result property="Oevaul" column="Oevaul" />
+			<result property="Cprice" column="Cprice" />
+			<result property="Ocreatetime" column="Ocreatetime" />
+			<result property="Ostate" column="Ostate" />
+		</collection>	
+	</resultMap>
+	<select id="selectOrders" resultMap="OrdersMap">
+		select * from Orders o right join Users u on o.Oid=u.Uid
+	</select>
+	<!-- 联合查询Users对Receivers（一对多） -->
+	<resultMap type="com.demo.pojo.Users" id="ReceiversMap" extends="BaseMap">
+		<collection property="ReceiversList" ofType="com.demo.pojo.Receivers">
+			<id property="Rid" column="Rid" />
+			<result property="Rname" column="Rname" />
+			<result property="Uid" column="Uid" />
+			<result property="Rtel" column="Rtel" />
+			<result property="Rprovince" column="Rprovince" />
+			<result property="Rcity" column="Rcity" />
+			<result property="Rdistrict" column="Rdistrict" />
+			<result property="Radress" column="Radress" />
+		</collection>	
+	</resultMap>
+	<select id="selectReceivers" resultMap="ReceiversMap">
+		select * from Receivers r right join Users u on r.Rid=u.Uid
+	</select>
+	<!-- 联合查询Users对Courses（多对多） -->
+	<resultMap type="com.demo.pojo.Users" id="CoursesMap" extends="BaseMap">
+		<collection property="CoursesList" ofType="com.demo.pojo.Courses">
+			<id property="Cid" column="Cid" />
+			<result property="Tid" column="Tid" />
+			<result property="Sid" column="Sid" />
+			<result property="Cname" column="Cname" />
+			<result property="Ctime" column="Ctime" />
+			<result property="Cimage" column="Cimage" />
+			<result property="Cinfo" column="Cinfo" />
+		</collection>	
+	</resultMap>
+	<select id="selectCourses" resultMap="CoursesMap">
+		select * from Courses c right join Learns l on c.Cid=l.Cid left join Users u on l.Uid=u.Uid
+		
+		<!--  select * from Courses c right join Users u on c.Cid=u.Uid-->
+	</select>
+	
+	<resultMap type="com.demo.pojo.Users" id="FlowsMap" extends="BaseMap">
+		<collection property="FlowsList" ofType="com.demo.pojo.Flows">
+			<id property="Fid" column="Fid" />
+			<result property="Oid" column="Oid" />
+			<result property="Fprovince" column="Fprovince" />
+			<result property="Fcity" column="Fcity" />
+			<result property="Fdistrict" column="Fdistrict" />
+			<result property="Fadress" column="Fadress" />
+		</collection>	
+	</resultMap>
+	<select id="selectFlows" resultMap="FlowsMap">
+	    select * from  
+	    (select o.Oid from Users u inner join Orders o 
+	     on u.Uid = o.Uid where u.Uid = #{Uid}) 
+	     o inner join Flows f on o.Oid = f.Oid;
+	</select>
+	
+</mapper>

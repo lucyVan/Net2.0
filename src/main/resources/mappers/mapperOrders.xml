@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.mapperOrders">
+	<resultMap id="BaseMap" type="com.demo.pojo.Orders">
+		<id property="Oid" column="Oid" />
+		<result property="Cid" column="Cid" />
+		<result property="Uid" column="Uid" />
+		<result property="Oevaul" column="Oevaul" />
+		<result property="Cprice" column="Cprice" />
+		<result property="Ocreatetime" column="Ocreatetime" />
+		<result property="Ostate" column="Ostate" />
+	</resultMap>
+	
+	<resultMap id="UsersMap" type="com.demo.pojo.Orders" extends="BaseMap">
+		<association property="Users" javaType="com.demo.pojo.Users">
+			<id property="Uid" column="Uid"></id>
+			<result property="Uname" column="Uname"></result>
+			<result property="Usex" column="Usex"></result>
+			<result property="Utel" column="Utel"></result>
+			<result property="Uemail" column="Uemail"></result>
+			<result property="Upassword" column="Upassword"></result>
+			<result property="Ucreatetime" column="Ucreatetime"></result>
+			<result property="Sid" column="Sid"></result>
+			<result property="Uimage" column="Uimage"></result>
+		</association>
+	</resultMap>
+	<resultMap id="CoursesMap" type="com.demo.pojo.Orders" extends="BaseMap">
+		<association property="Courses" javaType="com.demo.pojo.Courses">
+			<id property="Cid" column="Cid"></id>
+			<result property="Tid" column="Tid"></result>
+			<result property="Sid" column="Sid"></result>
+			<result property="Cname" column="Cname"></result>
+			<result property="Ctime" column="Ctime"></result>
+			<result property="Cimage" column="Cimage"></result>
+			<result property="Cinfo" column="Cinfo"></result>
+		</association>
+	</resultMap>
+	<resultMap id="FlowsMap" type="com.demo.pojo.Orders" extends="BaseMap">
+		<association property="Flows" javaType="com.demo.pojo.Flows">
+			<id property="Fid" column="Fid"></id>
+			<result property="Oid" column="Oid"></result>
+			<result property="Fprovince" column="Fprovince"></result>
+			<result property="Fcity" column="Fcity"></result>
+			<result property="Fdistrict" column="Fdistrict"></result>
+			<result property="Faddress" column="Faddress"></result>
+		</association>
+	</resultMap>
+	
+
+
+    <!-- 通过Oid/Cid/Uid查询所有属性值 -->
+	<select id="selectOrders" resultType="com.demo.pojo.Orders">
+		select * from Orders
+		<where>
+		    <if test="Oid!=null and Oid!=''">
+		        and Oid=#{Oid}
+		    </if>
+		    <if test="Cid!=null and Cid!=''">
+		        and Cid=#{Cid}
+		    </if>
+		    <if test="Uid!=null and Uid!=''">
+		        and Uid=#{Uid}
+		    </if>
+		</where>
+	</select>
+    
+    <!-- 通过Oid动态更新其他属性值 -->
+	<update id="updateOrders" >
+	    update Orders
+	    <set>
+	        <if test="Oevaul!=null and Oevaul!=''">
+	            Oevaul=#{Oevaul},
+	        </if>
+	        <if test="Ostate!=null and Ostate!=''">
+	            Ostate=#{Ostate},
+	        </if>
+	    </set>
+	    <where>
+	        Oid=#{Oid}
+	    </where>
+	</update>
+
+    <!-- 通过Oid动态删除其他属性值 -->
+	<delete id="deleteOrders" parameterType="java.util.List">
+	    delete from Orders where Oid in
+	        <foreach collection="list" item="Oid" open="(" close=")" separator=",">
+	            #{Oid}
+	        </foreach>
+	</delete>
+
+    <!-- 动态插入Orders中对应的属性值  -->
+	<sql id="OrdersKey">
+        <trim suffixOverrides=",">
+            <if test="Oid!=null and Oid!=''">
+                Oid,
+            </if>
+            <if test="Cid!=null and Cid!=''">
+                Cid,
+            </if>
+            <if test="Uid!=null and Uid!=''">
+                Uid,
+            </if>
+            <if test="Oevaul!=null and Oevaul!=''">
+                Oevaul,
+            </if>
+            <if test="Cprice!=null and Cprice!=''">
+                Cprice,
+            </if>  
+            <if test="Ocreatetime!=null and Ocreatetime!=''">
+                Ocreatetime,
+            </if>
+            <if test="Ostate!=null and Ostate!=''">
+                Ostate,
+            </if>
+        </trim>
+    </sql>
+    <sql id="OrdersValues">
+        <trim suffixOverrides=",">
+            <if test="Oid!=null and Oid!=''">
+                #{Oid},
+            </if>
+            <if test="Cid!=null and Cid!=''">
+                #{Cid},
+            </if>
+            <if test="Uid!=null and Uid!=''">
+                #{Uid},
+            </if>
+            <if test="Oevaul!=null and Oevaul!=''">
+                #{Oevaul},
+            </if>
+            <if test="Cprice!=null and Cprice!=''">
+                #{Cprice},
+            </if>
+            <if test="Ocreatetime!=null and Ocreatetime!=''">
+                #{Ocreatetime},
+            </if>
+            <if test="Ostate!=null and Ostate!=''">
+                #{Ostate},
+            </if>
+        </trim>
+    </sql>
+	<insert id="insertOrders" >
+       insert into Orders(<include refid="OrdersKey"/>) 
+       values(<include refid="OrdersValues"/>)
+	</insert>
+	
+
+
+    <select id="selectUsers" resultMap="UsersMap" >
+		select *from 
+		Orders o left join Users u 
+		on o.Uid=u.Uid where o.Uid=#{Uid}
+	</select>
+    
+    
+    <select id="selectCourses" resultMap="CoursesMap" >
+		select * from 
+		Orders o left join Courses c
+		on o.Cid=c.Cid where o.Cid=#{Cid}
+	</select>
+	
+	
+	<select id="selectFlows" resultMap="FlowsMap" >
+		select * from 
+		Orders o left join Flows f
+		on o.Oid=f.Oid where o.Oid=#{Oid}
+	</select>
+	
+	
+	
+</mapper>

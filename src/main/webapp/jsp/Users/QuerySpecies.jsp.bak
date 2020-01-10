@@ -1,0 +1,101 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+			<title>Users</title>
+			<link rel="stylesheet" href="/Net/layui/css/layui.css">
+			<script src="/Net/layui/layui.js"></script>
+			<script src="/Net/layui/lay/modules/jquery.js"></script>
+			<script src="/Net/layui/lay/modules/element.js"></script>
+			<style>
+				.layui-footer {
+					margin: 0 0 0 -16%;
+					text-align: right;
+				}
+				.layui-body{
+					margin: 0 0 0 -15%;
+				}
+			</style>
+	</head>
+<body class="layui-layout-body">
+	<div class="layui-layout layui-layout-admin">
+		<div class="layui-header">
+			<ul class="layui-nav" lay-filter="" style="padding-left: 5%; padding-right: -15%;">
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QueryCourses.do">Courses</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QueryFlows.do">Flows</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QueryLearns.do">Learns</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QueryNotices.do">Notices</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QueryOrders.do">Orders</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QueryReceivers.do">Receivers</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QuerySpecies.do">Species</a>
+				</li>
+				<li class="layui-nav-item">
+					<a href="/Net/jsp/Users/QueryTeachers.do">Teachers</a>
+				</li>
+			</ul>
+			<ul class="layui-nav layui-layout-right">
+				<li class="layui-nav-item">
+					<a href="javascript:;">
+						<img src="http://t.cn/RCzsdCq" class="layui-nav-img"> 个人中心
+					</a>
+					<dl class="layui-nav-child">
+						<dd>
+							<a href="/Net/jsp/Users/UsersDetial.do">基本资料</a>
+						</dd>
+						<dd>
+							<a href="/Net/jsp/Users/logout.do">退出</a>
+						</dd>
+					</dl>
+				</li>
+			</ul>
+		</div>
+		<div style="padding: 15%;">
+			<div class="layui-body">
+				<table class="layui-table">
+					<colgroup>
+						<col width="150">
+						<col width="200">
+						<col>
+					</colgroup>
+					<thead>
+					<tr>
+						<th>分类编号</th>
+						<th>分类名称</th>
+						<th>分类信息</th>
+					</thead>
+					<tbody>
+						<c:forEach items="${msg}" var="obj">
+							<tr>
+								<td>${obj.sid}</td>
+								<td>${obj.sname}</td>
+								<td>${obj.sinfo}</td>
+							</tr>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="layui-footer">
+			<!-- 底部固定区域 -->
+			&nbsp;&nbsp; © Net.com - Net课程，你值得拥有！！！
+		</div>
+	</div>
+</body>
+</html>

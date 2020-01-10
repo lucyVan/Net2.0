@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.demo.dao.mapperSpecies">
+	<resultMap type="com.demo.pojo.Species" id="BaseMap">
+		<id property="Sid" column="Sid" />
+		<result property="Sname" column="Sname" />
+		<result property="Sinfo" column="Sinfo" />
+	</resultMap>
+	
+	<resultMap type="com.demo.pojo.Species" id="UsersMap" extends="BaseMap">
+		<collection property="UsersList" javaType="java.util.List"
+			ofType="com.demo.pojo.Users" foreignColumn="Sid">
+			<id property="Uid" column="Uid"></id>
+			<result property="Uname" column="Uname"></result>
+			<result property="Usex" column="Usex"></result>
+			<result property="Utel" column="Utel"></result>
+			<result property="Uemail" column="Uemail"></result>
+			<result property="Upassword" column="Upassword"></result>
+			<result property="Ucreatetime" column="Ucreatetime"></result>
+			<result property="Sid" column="Sid"></result>
+			<result property="Uimage" column="Uimage"></result>
+		</collection>
+	</resultMap>
+	<resultMap type="com.demo.pojo.Species" id="CoursesMap" extends="BaseMap">
+		<collection property="CoursesList" javaType="java.util.List"
+			ofType="com.demo.pojo.Courses" foreignColumn="Sid">
+			<id property="Cid" column="Cid" />
+			<result property="Tid" column="Tid" />
+			<result property="Sid" column="Sid" />
+			<result property="Cname" column="Cname" />
+			<result property="Ctime" column="Ctime" />
+			<result property="Cimage" column="Cimage" />
+			<result property="Cinfo" column="Cinfo" />
+		</collection>
+	</resultMap>
+	
+	<!-- 通过Sid/Sname查询所有属性值 -->
+	<select id="selectSpecies" resultType="com.demo.pojo.Species">
+		select * from Species
+		<where> 
+		    <if test="Sid!=null and Sid!=''">
+		        and Sid=#{Sid}
+		    </if>
+		    <if test="Sname!=null and Sname!=''">
+		        and Sname=#{Sname}
+		    </if>
+		</where>
+	</select>
+	
+	<!-- 通过Sid动态更新其他属性值 -->
+	<update id="updateSpecies" >
+	    update Species
+	    <set>
+	        <if test="Sname!=null and Sname!=''">
+	            Sname=#{Sname},
+	        </if>
+	        <if test="Sinfo!=null and Sinfo!=''">
+	            Sinfo=#{Sinfo},
+	        </if>
+	    </set>
+	    <where>
+	        Sid=#{Sid}
+	    </where>
+	</update>
+
+	
+	<!-- 通过Tid动态删除其他属性值 -->
+	<delete id="deleteSpecies" parameterType="java.util.List">
+	    delete from Species where Sid in
+	        <foreach collection="list" item="Sid" open="(" close=")" separator=",">
+	            #{Sid}
+	        </foreach>
+	</delete>
+	
+	
+	<!-- 动态插入Teachers中对应的属性值 -->
+	<sql id="SpeciesKey">
+        <trim suffixOverrides=",">
+            <if test="Sid!=null and Sid!=''">
+                Sid,
+            </if>
+            <if test="Sname!=null and Sname!=''">
+                Sname,
+            </if>
+            <if test="Sinfo!=null and Sinfo!=''">
+                Sinfo,
+            </if>
+        </trim>
+    </sql>
+    <sql id="SpeciesValues">
+        <trim suffixOverrides=",">
+            <if test="Sid!=null and Sid!=''">
+                #{Sid},
+            </if>
+            <if test="Sname!=null and Sname!=''">
+                #{Sname},
+            </if>
+            <if test="Sinfo!=null and Sinfo!=''">
+                #{Sinfo},
+            </if>
+        </trim>
+    </sql>
+	<insert id="insertSpecies" parameterType="com.demo.pojo.Species">
+       insert into Species(<include refid="SpeciesKey"/>) 
+       values(<include refid="SpeciesValues"/>)
+    </insert>
+
+	
+
+	<select id="selectCourses" resultMap="CoursesMap">
+		SELECT * FROM
+		Species s INNER JOIN Courses c 
+		ON c.Sid = s.Sid where s.Sid=#{Sid}
+	</select>
+	<select id="selectUsers" resultMap="UsersMap">
+		SELECT * FROM
+		Species s INNER JOIN Users u 
+		ON u.sid = s.Sid where s.Sid=#{Sid} 
+	</select>
+	
+	
+</mapper>
+

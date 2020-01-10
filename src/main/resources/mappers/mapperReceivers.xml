@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.demo.dao.mapperReceivers">
+	<resultMap id="BaseMap" type="com.demo.pojo.Receivers">
+		<id property="Rid" column="Rid"></id>
+		<result property="Uid" column="Uid"></result>
+		<result property="Rname" column="Rname"></result>
+		<result property="Rtel" column="Rtel"></result>
+		<result property="Rprovince" column="Rprovince"></result>
+		<result property="Rcity" column="Rcity"></result>
+		<result property="Rdistrict" column="Rdistrict"></result>
+		<result property="Radress" column="Radress"></result>
+	</resultMap>
+	<resultMap id="UsersMap" type="com.demo.pojo.Receivers" extends="BaseMap">
+		<association property="Users" javaType="com.demo.pojo.Users">
+			<id property="Uid" column="Uid"></id>
+			<result property="Uname" column="Uname"></result>
+			<result property="Usex" column="Usex"></result>
+			<result property="Utel" column="Utel"></result>
+			<result property="Uemail" column="Uemail"></result>
+			<result property="Upassword" column="Upassword"></result>
+ 			<result property="Ucreatetime" column="Ucreatetime"></result>	 		
+			<result property="Sid" column="Sid"></result>
+			<result property="Uimage" column="Uimage"></result>		
+		</association>
+	</resultMap>
+	
+	<!-- 通过Rid/Rname/Uid查询所有属性值 -->
+	<select id="selectReceivers" resultType="com.demo.pojo.Receivers">
+		select * from Receivers
+		<where>
+		    <if test="Rid!=null and Rid!=''">
+		        and Rid=#{Rid}
+		    </if>
+		    <if test="Rname!=null and Rname!=''">
+		        and Rname=#{Rname}
+		    </if>
+		    <if test="Uid!=null and Uid!=''">
+		        and Uid=#{Uid}
+		    </if>
+		</where>
+	</select>
+	
+	<!-- 通过Rid动态更新其他属性值 -->
+		<update id="updateReceivers" >
+		    update Receivers
+		    <set>
+		    	<if test="Uid!=null and Uid!=''">
+		            Uid=#{Uid},
+		        </if>
+		        <if test="Rname!=null and Rname!=''">
+		            Rname=#{Rname},
+		        </if>
+		        <if test="Rtel!=null and Rtel!=''">
+		            Rtel=#{Rtel},
+		        </if>
+		        <if test="Rprovince!=null and Rprovince!=''">
+		            Rprovince=#{Rprovince},
+		        </if>
+		        <if test="Rcity!=null and Rcity!=''">
+		            Rcity=#{Rcity},
+		        </if>
+		        <if test="Rdistrict!=null and Rdistrict!=''">
+		            Rdistrict=#{Rdistrict},
+		        </if>
+		        <if test="Radress!=null and Radress!=''">
+		            Radress=#{Radress},
+		        </if>
+		    </set>
+		    <where>
+		        Rid=#{Rid}
+		    </where>
+		</update>
+
+    <!-- 通过Rid动态删除其他属性值 -->
+	<delete id="deleteReceivers" parameterType="java.util.List">
+	    delete from Receivers where Rid in
+	        <foreach collection="list" item="Rid" open="(" close=")" separator=",">
+	            #{Rid}
+	        </foreach>
+	</delete>	
+	
+	<!-- 动态插入Teachers中对应的属性值 -->
+	<sql id="ReceiversKey">
+        <trim suffixOverrides=",">
+            <if test="Rid!=null and Rid!=''">
+                Rid,
+            </if>
+            <if test="Uid!=null and Uid!=''">
+                Uid,
+            </if>
+            <if test="Rname!=null and Rname!=''">
+                Rname,
+            </if>
+            <if test="Rtel!=null and Rtel!=''">
+                Rtel,
+            </if>
+            <if test="Rprovince!=null and Rprovince!=''">
+                Rprovince,
+            </if>
+            <if test="Rcity!=null and Rcity!=''">
+                Rcity,
+            </if>
+            <if test="Rdistrict!=null and Rdistrict!=''">
+                Rdistrict,
+            </if>
+            <if test="Radress!=null and Radress!=''">
+                Radress,
+            </if>
+        </trim>
+    </sql>
+    <sql id="ReceiversValues">
+        <trim suffixOverrides=",">
+            <if test="Rid!=null and Rid!=''">
+                #{Rid},
+            </if>
+            <if test="Uid!=null and Uid!=''">
+                #{Uid},
+            </if>
+            <if test="Rname!=null and Rname!=''">
+                #{Rname},
+            </if>
+            <if test="Rtel!=null and Rtel!=''">
+                #{Rtel},
+            </if>
+            <if test="Rprovince!=null and Rprovince!=''">
+                #{Rprovince},
+            </if>
+            <if test="Rcity!=null and Rcity!=''">
+                #{Rcity},
+            </if>
+            <if test="Rdistrict!=null and Rdistrict!=''">
+                #{Rdistrict},
+            </if>
+            <if test="Radress!=null and Radress!=''">
+                #{Radress},
+            </if>
+        </trim>
+    </sql>
+	<insert id="insertReceivers" >
+       insert into Receivers(<include refid="ReceiversKey"/>) 
+       values(<include refid="ReceiversValues"/>)
+    </insert>
+	
+	<select id="selectUsers" resultMap="UsersMap" >		
+		select * from 
+		Receivers r left join Users u 
+		on r.Uid=u.Uid where r.Uid=#{Uid}
+	</select>	
+	
+</mapper>

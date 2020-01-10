@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc.xsd
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/aop
+http://www.springframework.org/schema/aop/spring-aop.xsd">
+	<!-- 配置数据源 dbcp数据库连接池 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://10.2.224.103:3306/net?allowPublicKeyRetrieval=true&amp;useSSL=false" />
+		<property name="username" value="test" />
+		<property name="password" value="root" />
+	</bean>
+	<!-- 配置sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据库连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 加载Mybatis全局配置文件 -->
+		<property name="configLocation" value="Config.xml" />
+	</bean>
+	<!-- 配置mapper扫描器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 扫描包路径，如果需要扫描多个包中间用半角逗号隔开 -->
+		<property name="basePackage" value="com.demo.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="dateFormat" class="java.text.SimpleDateFormat">
+		<constructor-arg value="yyyy-MM-dd" />
+	</bean>
+	
+	<bean id="Admins" class="com.demo.po.Admins">
+		<property name="Aname"  value="lisi" />
+		<property name="Apassword"  value="123" />
+	</bean>
+	<bean id="Courses" class="com.demo.po.Courses">
+		<property name="Cid" value="123"/>
+		<property name="Tid" value="123"/>
+		<property name="Sid" value="123"/>
+		<property name="Cname" value="123"/>
+		<property name="Ctime">
+			<bean factory-bean="dateFormat" factory-method="parse">
+				<constructor-arg value="2015-12-31" />
+			</bean>
+		</property>
+		<property name="Cimage" value="null"/>
+		<property name="Cinfo" value="null"/>
+		<property name="Species" ref="Species"/>
+		<property name="Teachers" ref="Teachers"/>
+	</bean>
+	<bean id="Flows" class="com.demo.po.Flows">
+		<property name="Fid" value="123"/>
+		<property name="Oid" value="123"/>
+		<property name="Fprovince" value="123"/>
+		<property name="Fcity" value="123"/>
+		<property name="Fdistrict" value="123"/>
+		<property name="Fadress" value="123"/>
+		<property name="Orders" ref="Orders"/>
+	</bean>
+	<bean id="Learns" class="com.demo.po.Learns">
+		<property name="Lid" value="123"/>
+		<property name="Cid" value="123"/>
+		<property name="Uid" value="123"/>
+		<property name="Courses" ref="Courses"/>
+		<property name="Users" ref="Users"/>
+	</bean>
+	<bean id="Notices" class="com.demo.po.Notices">
+		<property name="Nid" value="123"/>
+		<property name="Oid" value="123"/>
+		<property name="Uid" value="123"/>
+		<property name="Nstate" value="123"/>
+		<property name="Orders" ref="Orders"/>
+		<property name="Users" ref="Users"/>
+	</bean>
+	<bean id="Orders" class="com.demo.po.Orders">
+		<property name="Oid" value="123"/>
+		<property name="Cid" value="123"/>
+		<property name="Uid" value="123"/>
+		<property name="Oevaul" value="123"/>
+		<property name="Cprice" value="123"/>
+		<property name="Ocreatetime">
+			<bean factory-bean="dateFormat" factory-method="parse">
+				<constructor-arg value="2015-12-31" />
+			</bean>
+		</property>
+		<property name="Ostate" value="123"/>
+		<property name="Users" ref="Users"/>
+		<property name="Courses" ref="Courses"/>
+		<property name="Flows" ref="Flows"/>
+	</bean>
+	<bean id="Receivers" class="com.demo.po.Receivers">
+		<property name="Rid" value="123"/>
+		<property name="Uid" value="123"/>
+		<property name="Rname" value="123"/>
+		<property name="Rtel" value="123"/>
+		<property name="Rprovince" value="123"/>
+		<property name="Rcity" value="123"/>
+		<property name="Rdistrict" value="123"/>
+		<property name="Radress" value="123"/>
+		<property name="Users" ref="Users"/>
+	</bean>
+	<bean id="Species" class="com.demo.po.Species">
+		<property name="Sid" value="123" />
+		<property name="Sname" value="123"/>
+		<property name="Sinfo" value="123" />
+		<property name="UsersList">
+			<list>
+				<ref bean="Users"/>
+			</list>
+		</property>
+		<property name="CoursesList">
+			<list>
+				<ref bean="Courses"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="Teachers" class="com.demo.po.Teachers">
+		<property name="Tid" value="123"/>
+		<property name="Tname" value="123"/>
+		<property name="Tsex" value="123"/>
+		<property name="Ttel" value="123"/>
+		<property name="Taddr" value="123"/>
+		<property name="Tinfo" value="123"/>
+		<property name="CoursesList" >
+			<list>
+				<ref bean="Courses"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="Users" class="com.demo.po.Users">
+		<property name="Uid" value="123"/>
+		<property name="Uname" value="123"/>
+		<property name="Usex" value="123"/>
+		<property name="Utel" value="123"/>
+		<property name="Uemail" value="123"/>
+		<property name="Upassword" value="123"/>
+		<property name="Ucreatetime">
+			<bean factory-bean="dateFormat" factory-method="parse">
+				<constructor-arg value="2015-12-31" />
+			</bean>
+		</property>
+		<property name="Uimage" value="123"/>
+		<property name="Sid" value="123"/>
+		<property name="Species" ref="Species"/>
+		<property name="LearnsList">
+			<list>
+				<ref bean="Learns"/>			
+			</list>
+		</property>
+		<property name="NoticesList">
+			<list>
+				<ref bean="Notices"/>			
+			</list>
+		</property>
+		<property name="OrdersList">
+			<list>
+				<ref bean="Orders"/>		
+			</list>
+		</property>
+		<property name="ReceiversList">
+			<list>
+				<ref bean="Receivers"/>			
+			</list>
+		</property>
+		<property name="CoursesList">
+			<list>
+				<ref bean="Courses"/>			
+			</list>
+		</property>
+	</bean>
+
+	
+	
+
+	<bean id="AdminsManage" class="com.demo.biz.AdminsManage" scope="singleton">
+		<property name="Admins" ref="Admins" />
+		<property name="mapperAdmins" ref="mapperAdmins" />
+	</bean>
+	
+	
+	
+	<bean id="CoursesManage" class="com.demo.biz.CoursesManage" scope="singleton">
+		<property name="Courses" ref="Courses" />
+		<property name="mapperCourses" ref="mapperCourses"/>
+	</bean>
+	
+	<bean id="FlowsManage" class="com.demo.biz.FlowsManage" scope="singleton">
+		<property name="Flows" ref="Flows" />
+		<property name="mapperFlows" ref="mapperFlows"/>
+	</bean>
+	
+	<bean id="LearnsManage" class="com.demo.biz.LearnsManage" scope="singleton">
+		<property name="Learns" ref="Learns" />
+		<property name="mapperLearns" ref="mapperLearns"/>
+	</bean>
+</beans>
